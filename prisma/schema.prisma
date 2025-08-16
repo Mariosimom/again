@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String  @id @default(cuid())
+  email     String  @unique
+  name      String?
+  password  String
+  role      Role    @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  AGENT
+}
+
+model MediaAsset {
+  id        String  @id @default(cuid())
+  url       String
+  alt       String?
+  createdAt DateTime @default(now())
+}
+
+model Area {
+  id        String  @id @default(cuid())
+  name      String
+  description String?
+  pricePerSqft String?
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  listings  Listing[]
+  projects  Project[]
+}
+
+model Agent {
+  id        String  @id @default(cuid())
+  name      String
+  role      String?
+  experience String?
+  image     String?
+  email     String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  listings  Listing[]
+}
+
+model Listing {
+  id        String  @id @default(cuid())
+  title     String
+  type      String
+  location  String
+  district  String?
+  price     Int
+  currency  String @default("AED")
+  bedrooms  Int
+  bathrooms Int
+  area      Int
+  features  String[]
+  amenities String[]
+  developer String?
+  completionYear Int?
+  status    String?
+  description String?
+  images    String[]
+  featured  Boolean @default(false)
+  exclusive Boolean @default(false)
+  published Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  areaRef   Area?   @relation(fields: [areaId], references: [id])
+  areaId    String?
+  agent     Agent?  @relation(fields: [agentId], references: [id])
+  agentId   String?
+}
+
+model Project {
+  id        String  @id @default(cuid())
+  title     String
+  type      String
+  location  String
+  developer String?
+  price     Int?
+  priceFrom Int?
+  completionDate String?
+  status    String?
+  units     Int?
+  features  String[]
+  amenities String[]
+  description String?
+  images    String[]
+  published Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  areaRef   Area?   @relation(fields: [areaId], references: [id])
+  areaId    String?
+}
+
+model Stat {
+  id        String  @id @default(cuid())
+  label     String
+  value     String
+  period    String?
+  createdAt DateTime @default(now())
+}
+
+model Testimonial {
+  id        String  @id @default(cuid())
+  name      String
+  quote     String
+  role      String?
+  createdAt DateTime @default(now())
+}
+
+model Block {
+  id        String  @id @default(cuid())
+  kind      BlockKind
+  title     String?
+  data      Json
+  order     Int       @default(0)
+  published Boolean   @default(true)
+  scheduleStart DateTime?
+  scheduleEnd   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum BlockKind {
+  HERO
+  STATS
+  LISTINGS_GRID
+  PROJECTS_GRID
+  TESTIMONIALS
+  CUSTOM_HTML
+  LOGO_STRIP
+  INVESTOR_CALLOUT
+}
