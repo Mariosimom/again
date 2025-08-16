@@ -1,4 +1,3 @@
-// next.config.mjs
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -8,5 +7,4 @@ const nextConfig = {
     ]
   }
 };
-
 export default nextConfig;
